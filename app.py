@@ -43,7 +43,7 @@ def gen_frames():  # generate frame by frame from camera
 
     if __name__ == "__main__":
         parser = argparse.ArgumentParser()
-        parser.add_argument('--weights', nargs='+', type=str, default=ROOT / 'best_aug_openvino_model', help='model path or triton URL')
+        parser.add_argument('--weights', nargs='+', type=str, default=ROOT / 'best_aug.pt', help='model path or triton URL')
         parser.add_argument('--source', type=str, default='0', help='file/dir/URL/glob/screen/0(webcam)')
         parser.add_argument('--data', type=str, default=ROOT / 'data.yaml', help='(optional) dataset.yaml path')
         parser.add_argument('--imgsz', '--img', '--img-size', nargs='+', type=int, default=[416], help='inference size h,w')
@@ -180,6 +180,9 @@ def gen_frames():  # generate frame by frame from camera
                 frame = buffer.tobytes()
                 yield (b'--frame\r\n'
                         b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
+
+        #print inference time
+        LOGGER.info(f"{s}{'' if len(det) else '(no detections), '}{dt[1].dt * 1E3:.1f}ms")
 
 @app.route('/video_feed')
 def video_feed():
