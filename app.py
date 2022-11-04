@@ -43,6 +43,7 @@ def gen_frames():  # generate frame by frame from camera
 
     if __name__ == "__main__":
         parser = argparse.ArgumentParser()
+        # parser.add_argument('--weights', nargs='+', type=str, default=ROOT / 'best_aug_openvino_model', help='model path or triton URL')
         parser.add_argument('--weights', nargs='+', type=str, default=ROOT / 'best_aug.pt', help='model path or triton URL')
         # parser.add_argument('--source', type=str, default='0', help='file/dir/URL/glob/screen/0(webcam)')
         parser.add_argument('--source', type=str, default='http://192.168.0.128:81/stream', help='file/dir/URL/glob/screen/0(webcam)')
@@ -178,14 +179,21 @@ def gen_frames():  # generate frame by frame from camera
                     windows.append(p)
                     cv2.namedWindow(str(p), cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)  # allow window resize (Linux)
                     cv2.resizeWindow(str(p), im0.shape[1], im0.shape[0])
+                    
 
+                cv2.putText(im0,'Trolley:'+str(len(det)),(50,50),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,0),2,cv2.LINE_AA)
                 ret, buffer = cv2.imencode('.jpg', im0)
+                
                 frame = buffer.tobytes()
+                
                 yield (b'--frame\r\n'
                         b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
 
+
         #print inference time
         LOGGER.info(f"{s}{'' if len(det) else '(no detections), '}{dt[1].dt * 1E3:.1f}ms")
+        # print(len(det))
+        
 
 @app.route('/video_feed')
 def video_feed():
