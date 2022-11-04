@@ -44,7 +44,8 @@ def gen_frames():  # generate frame by frame from camera
     if __name__ == "__main__":
         parser = argparse.ArgumentParser()
         parser.add_argument('--weights', nargs='+', type=str, default=ROOT / 'best_aug.pt', help='model path or triton URL')
-        parser.add_argument('--source', type=str, default='0', help='file/dir/URL/glob/screen/0(webcam)')
+        # parser.add_argument('--source', type=str, default='0', help='file/dir/URL/glob/screen/0(webcam)')
+        parser.add_argument('--source', type=str, default='http://192.168.0.128:81/stream', help='file/dir/URL/glob/screen/0(webcam)')
         parser.add_argument('--data', type=str, default=ROOT / 'data.yaml', help='(optional) dataset.yaml path')
         parser.add_argument('--imgsz', '--img', '--img-size', nargs='+', type=int, default=[416], help='inference size h,w')
         parser.add_argument('--conf-thres', type=float, default=0.50, help='confidence threshold')
@@ -93,7 +94,7 @@ def gen_frames():  # generate frame by frame from camera
     imgsz = check_img_size(opt.imgsz, s=stride)  # check image size
 
     # Dataloader
-    bs = 1  # batch_size
+    # bs = 1  # batch_size
     cnt = 0
     if webcam:
         view_img = check_imshow(warn=True)
@@ -104,6 +105,8 @@ def gen_frames():  # generate frame by frame from camera
     else:
         dataset = LoadImages(source, img_size=imgsz, stride=stride, auto=pt, vid_stride=opt.vid_stride)
     vid_path, vid_writer = [None] * bs, [None] * bs
+
+    
 
     # Run inference
     model.warmup(imgsz=(1 if pt or model.triton else bs, 3, *imgsz))  # warmup
