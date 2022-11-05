@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GoCart Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+    crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <div class="container-fluid p-1 pt-2 bg-dark bg-gradient text-white text-center">
+    <h1>Go-Cart</h1>
+    <p> Trolley Management System</p>
+  </div>
+  <div class="container-fluid pt-2 my-3 text-center">
+    <div class="row">
+      <div class="col-sm-6 pt-2 border">
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript">
+          google.charts.load('current', { 'packages': ['bar'] });
+          google.charts.setOnLoadCallback(drawChart);
+
+          function drawChart() {
+            var data1 = google.visualization.arrayToDataTable([
+              ['Date', 'Trolley'],
+              ['1/11', 5],
+              ['2/11', 10],
+              ['3/11', 2],
+              ['4/11', 8],
+              ['5/11', 12],
+              ['6/11', 15],
+              ['7/11', 9],
+            ]);
+
+            var data2 = google.visualization.arrayToDataTable([
+              ['Date', 'Trolley'],
+              ['1/11', 5],
+              ['2/11', 10],
+              ['3/11', 2],
+              ['4/11', 8],
+              ['5/11', 12],
+              ['6/11', 15],
+              ['7/11', 9],
+            ]);
+
+            var options1 = {
+              chart: {
+                title: 'Abandoned Trolley',
+              },
+              legend: { position: 'none' },
+            };
+
+            var options2 = {
+              chart: {
+                title: 'Missing Trolley',
+              },
+              legend: { position: 'none' },
+            };
+
+            var chart1 = new google.charts.Bar(document.getElementById('columnchart_material1'));
+            chart1.draw(data1, google.charts.Bar.convertOptions(options1));
+
+            var chart2 = new google.charts.Bar(document.getElementById('columnchart_material2'));
+            chart2.draw(data2, google.charts.Bar.convertOptions(options2));
+          }
+        </script>
+        <div id="columnchart_material1" style="width: 700px; height: 300px; display:block; margin: 0 auto;"></div>
+        <div id="columnchart_material2" style="width: 700px; height: 300px; display:block; margin: 0 auto;"></div>
+      </div>
+
+
+      <div class="col-sm-6 pt-2 border">
+        <p><img src="" alt="" id="image"><br></p>
+        <p id="cart-text"></p>
+        <!-- <div class="embed-responsive-item">
+                <iframe class="embed-responsive-item text-center" src="http://192.168.0.128:81/stream" title="IP Camera" style="width:800px; height:700px; display:block; margin: auto;padding-top: 5px;"></iframe>
+              </div> -->
+      </div>
+    </div>
+  </div>
+  <footer>
+    <p style="text-align: center;">Copyright &copy 405 Found, 2022 ver. 1.0</p>
+  </footer>
+  <script>
+    var ws = new WebSocket("ws://localhost:5000/data");
+    ws.onmessage = function (event) {
+      console.log(event.data)
+      let temp_data = JSON.parse(event.data)
+      document.getElementById("image").src = `data:image/jpg;base64, ${temp_data.frame}`
+      document.getElementById("cart-text").innerHTML = `${temp_data.det} Abandonded Trolley Detected. Detection Time ${temp_data.timing}`
+    };
+  </script>
+</body>
+
+</html>
